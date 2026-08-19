@@ -1,0 +1,15 @@
+{
+  "name": "apni-dukaan-clone",
+  "version": "1.0.0",
+  "description": "Halal Meat & International Grocery Store",
+  "scripts": {
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm run dev",
+    "seed": "cd backend && node seeds/seed.js",
+    "install-all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
