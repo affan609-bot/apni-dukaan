@@ -1,5 +1,5 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://apni-dukaan-api.vercel.app/api/$1" }
+    { "source": "/api/(.*)", "destination": "https://apni-dukaan-api-rosy.vercel.app/api/$1" }
   ]
 }
