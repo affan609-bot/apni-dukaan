@@ -14,7 +14,10 @@ const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20, standardHeade
 const orderLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 30, standardHeaders: true, legacyHeaders: false });
 
 app.use('/api/', generalLimiter);
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGIN || true,
+  credentials: true
+}));
 app.use(express.json({ limit: '10kb' }));
 app.set('trust proxy', 1);
 
