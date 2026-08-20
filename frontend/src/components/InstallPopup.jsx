@@ -8,9 +8,6 @@ export default function InstallPopup() {
     const alreadyInstalled = window.matchMedia('(display-mode: standalone)').matches;
     if (alreadyInstalled) return;
 
-    const dismissed = localStorage.getItem('ad_install_dismissed');
-    if (dismissed) return;
-
     const handler = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -18,14 +15,10 @@ export default function InstallPopup() {
 
     window.addEventListener('beforeinstallprompt', handler);
 
-    const timer = setTimeout(() => {
-      const d = localStorage.getItem('ad_install_dismissed');
-      if (!d) setShowPopup(true);
-    }, 2500);
+    setShowPopup(true);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
-      clearTimeout(timer);
     };
   }, []);
 
@@ -35,23 +28,13 @@ export default function InstallPopup() {
       const { outcome } = await deferredPrompt.userChoice;
       setShowPopup(false);
       setDeferredPrompt(null);
-      if (outcome === 'accepted') {
-        localStorage.removeItem('ad_install_dismissed');
-      }
     } else {
-      const ua = navigator.userAgent.toLowerCase();
-      if (ua.includes('android')) {
-        alert('Chrome menu (3 dots) → "Install App" dabao');
-      } else {
-        alert('Safari → Share button → "Add to Home Screen" dabao');
-      }
       setShowPopup(false);
     }
   };
 
   const handleDismiss = () => {
     setShowPopup(false);
-    localStorage.setItem('ad_install_dismissed', Date.now().toString());
   };
 
   if (!showPopup) return null;
@@ -62,7 +45,7 @@ export default function InstallPopup() {
         <div className="bg-gradient-to-br from-orange-500 to-yellow-500 p-6 text-center relative">
           <button
             onClick={handleDismiss}
-            className="absolute top-3 right-3 w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition-colors"
+            className="absolute top-3 right-3 w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white text-lg"
           >
             ✕
           </button>
@@ -81,21 +64,15 @@ export default function InstallPopup() {
 
           <div className="space-y-3 mb-5">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center shrink-0">
-                ✓
-              </div>
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center shrink-0 text-green-600 font-bold text-sm">✓</div>
               <span className="text-sm text-gray-600">Full screen app jaisa chalega</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center shrink-0">
-                ✓
-              </div>
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center shrink-0 text-green-600 font-bold text-sm">✓</div>
               <span className="text-sm text-gray-600">Phone pe icon ban jayega</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center shrink-0">
-                ✓
-              </div>
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center shrink-0 text-green-600 font-bold text-sm">✓</div>
               <span className="text-sm text-gray-600">Bohot fast load hoga</span>
             </div>
           </div>
