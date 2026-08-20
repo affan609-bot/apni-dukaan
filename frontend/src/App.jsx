@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import InstallButton from './components/InstallButton';
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import ProductPage from './pages/ProductPage';
@@ -40,6 +41,7 @@ function App() {
               </Routes>
             </main>
             <Footer />
+            <InstallButton />
             <Toaster
               position="top-right"
               toastOptions={{
