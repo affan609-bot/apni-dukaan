@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export default function InstallPopup() {
   const [showPopup, setShowPopup] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const alreadyInstalled = window.matchMedia('(display-mode: standalone)').matches;
@@ -11,27 +12,29 @@ export default function InstallPopup() {
     const handler = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
+      setReady(true);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
 
-    setShowPopup(true);
+    const timer = setTimeout(() => {
+      setShowPopup(true);
+    }, 3000);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
+      clearTimeout(timer);
     };
   }, []);
 
-  const handleInstall = async () => {
+  const handleInstall = useCallback(async () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       setShowPopup(false);
       setDeferredPrompt(null);
-    } else {
-      setShowPopup(false);
     }
-  };
+  }, [deferredPrompt]);
 
   const handleDismiss = () => {
     setShowPopup(false);
@@ -77,12 +80,27 @@ export default function InstallPopup() {
             </div>
           </div>
 
-          <button
-            onClick={handleInstall}
-            className="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-bold py-4 rounded-xl text-lg transition-colors shadow-lg"
-          >
-            Abhi Install Karo
-          </button>
+          {ready ? (
+            <button
+              onClick={handleInstall}
+              className="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-bold py-4 rounded-xl text-lg transition-colors shadow-lg"
+            >
+              Abhi Install Karo
+            </button>
+          ) : (
+            <div className="text-center">
+              <div className="bg-orange-50 border-2 border-dashed border-orange-300 rounded-xl p-4 mb-3">
+                <p className="text-orange-700 font-bold text-sm mb-1">Manual Install Karo:</p>
+                <p className="text-gray-600 text-sm">Chrome mein <strong>3 dots (⋮)</strong> dabao → <strong>"Install App"</strong> ya <strong>"Add to Home Screen"</strong> select karo</p>
+              </div>
+              <button
+                onClick={handleDismiss}
+                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-500 font-bold py-3 rounded-xl transition-colors"
+              >
+                Samajh gaya
+              </button>
+            </div>
+          )}
         </div>
 
         <button
