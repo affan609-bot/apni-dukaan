@@ -26,7 +26,10 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  if (event.request.url.includes('/api/')) {
+  const url = event.request.url;
+  if (!url.startsWith('http')) return;
+
+  if (url.includes('/api/')) {
     event.respondWith(
       fetch(event.request).catch(() => {
         return new Response(JSON.stringify({ message: 'Offline' }), {
@@ -40,7 +43,9 @@ self.addEventListener('fetch', (event) => {
       caches.match(event.request).then((cached) => {
         return cached || fetch(event.request).then((response) => {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, clone).catch(() => {});
+          });
           return response;
         });
       }).catch(() => {
